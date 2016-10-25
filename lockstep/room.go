@@ -2,6 +2,7 @@ package lockstep
 
 import (
 	"errors"
+	"fighting/conf"
 	"fighting/pb"
 	"fmt"
 	"github.com/golang/protobuf/proto"
@@ -36,7 +37,7 @@ type Room struct {
 	State     RoomState
 	//step 补偿
 	AvgPerTTL int64
-	MSendTime time.Duration
+	MSendTime time.Time
 	//long(1.0/self.frameSpeed*10000000)
 	FrameTickLength int64
 }
@@ -265,7 +266,7 @@ func (this *Room) StartLoopPush() {
 		logger.Debug("start loopPush!!!!")
 		//发送ready的消息
 		this.SendReady()
-		this.MSendTime = time.Since(time.Now())
+		this.MSendTime = time.Now()
 		this.IsStartLoopPush = true //每个房间只启动一个goroutine
 		this.LoopPush()
 	}
@@ -276,19 +277,23 @@ func (this *Room) LoopPush() {
 		for {
 			//没有玩家后需要清除定时器
 			if this.IsStartLoopPush && (this.GetPlayerCount() > this.GetOfflineCount()) {
-				st := time.Now()
+				// st := time.Now()
+				// //do task
+				// this.Step()
+				// //auto sleep time!!!!!!!!!!!!!!!!!!!
+				// // logger.Debug(fmt.Sprintf("11111step run time: %d=======%d", td.Nanoseconds(), this.FrameTickLength))
+				// logger.Debug(fmt.Sprintf("step cost total time: %f ms", time.Now().Sub(st).Seconds()*1000))
+				// needSleepTime := this.FrameTickLength - time.Now().Sub(st).Nanoseconds() - this.AvgPerTTL
+				// // logger.Debug(fmt.Sprintf("22222step run time: %d", needSleepTime))
+				// if needSleepTime > 0 {
+				// 	time.Sleep(time.Duration(needSleepTime))
+				// 	// time.Sleep(time.Millisecond * 2)
+				// }
+				// // time.Sleep(time.Second * 2)
+
 				//do task
 				this.Step()
-				//auto sleep time!!!!!!!!!!!!!!!!!!!
-				// logger.Debug(fmt.Sprintf("11111step run time: %d=======%d", td.Nanoseconds(), this.FrameTickLength))
-				logger.Debug(fmt.Sprintf("step cost total time: %f ms", time.Now().Sub(st).Seconds()*1000))
-				needSleepTime := this.FrameTickLength - time.Now().Sub(st).Nanoseconds() - this.AvgPerTTL
-				// logger.Debug(fmt.Sprintf("22222step run time: %d", needSleepTime))
-				if needSleepTime > 0 {
-					time.Sleep(time.Duration(needSleepTime))
-					// time.Sleep(time.Millisecond * 2)
-				}
-				// time.Sleep(time.Second * 2)
+				time.Sleep(time.Millisecond * time.Duration(conf.ServerConfObj.StepPerMs))
 			} else {
 				//close(this.StepQueue)
 				logger.Debug("LoopPush stoped successful!!!")
@@ -318,8 +323,26 @@ func (this *Room) Step() {
 		Step:           this.Stepnum,
 		UsersInputData: inputs,
 	}
+
 	//send
 	this.Broadcast(11, collectUsersInput)
+	//auto adjust
+	if len(inputs) == 0 {
+		c_count := time.Now().Sub(this.MSendTime).Nanoseconds() / this.FrameTickLength
+
+		for {
+			// logger.Debug(fmt.Sprintf("%d >>>>>>%d", c_count, this.Stepnum))
+			// logger.Debug(fmt.Sprintf("%d !!!!!!!!!!!!>>>>>>%d", c_count, int64(this.Stepnum)))
+			if c_count >= int64(this.Stepnum) {
+				this.Stepnum += 1
+				collectUsersInput.Step = this.Stepnum
+				this.Broadcast(11, collectUsersInput)
+			} else {
+				break
+			}
+
+		}
+	}
 }
 
 // func (this *Room) Step() {

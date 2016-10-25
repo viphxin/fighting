@@ -1,0 +1,6 @@
+{
+	"TcpPort": 8909,
+	"StepPerMs": 2000,
+	"PoolSize": 10,
+	"LogLevel": 2
+}
