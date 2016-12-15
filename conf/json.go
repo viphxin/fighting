@@ -7,19 +7,6 @@ import (
 )
 
 var ServerConfObj struct {
-	TcpPort int
-	MaxConn int
-	//log
-	LogPath        string
-	LogName        string
-	MaxLogNum      int32
-	MaxFileSize    int64
-	LogFileUnit    logger.UNIT
-	LogLevel       logger.LEVEL
-	SetToConsole   bool
-	PoolSize       int32
-	MaxWorkerLen   int32
-	MaxSendChanLen int32
 	FrameSpeed     uint8
 	StepPerMs      int
 }

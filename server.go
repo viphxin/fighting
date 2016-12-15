@@ -2,7 +2,6 @@ package main
 
 import (
 	"fighting/api"
-	"fighting/conf"
 	"fighting/lockstep"
 	"fmt"
 	"github.com/viphxin/xingo/fserver"
@@ -42,11 +41,6 @@ func DoConnectionLost(fconn iface.Iconnection) {
 }
 
 func main() {
-	//init
-	utils.GlobalObject.TcpPort = conf.ServerConfObj.TcpPort
-	utils.GlobalObject.PoolSize = conf.ServerConfObj.PoolSize
-	logger.SetLevel(conf.ServerConfObj.LogLevel)
-
 	s := fserver.NewServer()
 
 	//add api ---------------start

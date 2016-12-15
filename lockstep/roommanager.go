@@ -28,7 +28,7 @@ func init() {
 	go func() {
 		for {
 			time.Sleep(time.Second * 20)
-			logger.Error(fmt.Sprintf("total rooms: %d.total CanJoinRooms: %d", RoomManagerObj.Count(), len(RoomManagerObj.CanJoinRooms)))
+			logger.Info(fmt.Sprintf("total rooms: %d.total CanJoinRooms: %d", RoomManagerObj.Count(), len(RoomManagerObj.CanJoinRooms)))
 		}
 
 	}()

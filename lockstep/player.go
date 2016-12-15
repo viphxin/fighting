@@ -77,7 +77,7 @@ func (this *Player) GetState() PLAYERSTATE {
 
 func (this *Player) SendMsg(msgId uint32, data proto.Message) {
 	if this.Fconn != nil {
-		this.Fconn.SendBuff(msgId, data)
+		this.Fconn.Send(msgId, data)
 	}
 }
 
