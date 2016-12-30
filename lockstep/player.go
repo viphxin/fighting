@@ -4,6 +4,8 @@ import (
 	"errors"
 	"github.com/golang/protobuf/proto"
 	"github.com/viphxin/xingo/iface"
+	"github.com/viphxin/xingo/fnet"
+	"github.com/viphxin/xingo/logger"
 )
 
 type PLAYERSTATE uint8
@@ -77,7 +79,13 @@ func (this *Player) GetState() PLAYERSTATE {
 
 func (this *Player) SendMsg(msgId uint32, data proto.Message) {
 	if this.Fconn != nil {
-		this.Fconn.Send(msgId, data)
+		packdata, err := fnet.DefaultDataPack.Pack(msgId, data)
+		if err == nil{
+			this.Fconn.Send(packdata)
+		}else{
+			logger.Error("pack data error")
+		}
+		//this.Fconn.Send(msgId, data)
 	}
 }
 

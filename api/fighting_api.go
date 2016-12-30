@@ -19,7 +19,7 @@ ping test
 func (this *FightingRouter) Api_0(request *fnet.PkgAll) {
 	logger.Debug("call Api_0")
 	// request.Fconn.SendBuff(0, nil)
-	request.Fconn.Send(0, nil)
+	//request.Fconn.Send(0, nil)
 }
 
 func (this *FightingRouter) Api_1(request *fnet.PkgAll) {
@@ -34,7 +34,13 @@ func (this *FightingRouter) Api_1(request *fnet.PkgAll) {
 			resp := &pb.CommonResponse{
 				State: 1,
 			}
-			request.Fconn.SendBuff(1, resp)
+			//request.Fconn.SendBuff(1, resp)
+			packdata, err := fnet.DefaultDataPack.Pack(1, resp)
+			if err == nil{
+				request.Fconn.Send(packdata)
+			}else{
+				logger.Error("pack data error")
+			}
 		} else {
 			logger.Error("no userid found")
 			request.Fconn.LostConnection()
@@ -59,7 +65,13 @@ func (this *FightingRouter) Api_2(request *fnet.PkgAll) {
 					resp := &pb.CommonResponse{
 						State: 1,
 					}
-					request.Fconn.SendBuff(2, resp)
+					//request.Fconn.SendBuff(2, resp)
+					packdata, err := fnet.DefaultDataPack.Pack(2, resp)
+					if err == nil{
+						request.Fconn.SendBuff(packdata)
+					}else{
+						logger.Error("pack data error")
+					}
 				}
 			} else {
 				logger.Error("add room error")
@@ -85,7 +97,13 @@ func (this *FightingRouter) Api_4(request *fnet.PkgAll) {
 					resp := &pb.CommonResponse{
 						State: 1,
 					}
-					request.Fconn.SendBuff(4, resp)
+					//request.Fconn.SendBuff(4, resp)
+					packdata, err := fnet.DefaultDataPack.Pack(4, resp)
+					if err == nil{
+						request.Fconn.SendBuff(packdata)
+					}else{
+						logger.Error("pack data error")
+					}
 					//检测是否所有客户端资源加载完成
 					if room.IsAllReady() {
 						room.StartLoopPush()
