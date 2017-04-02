@@ -7,6 +7,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/viphxin/xingo/fnet"
 	"github.com/viphxin/xingo/logger"
+	"github.com/viphxin/xingo/utils"
 	_ "time"
 )
 
@@ -35,10 +36,10 @@ func (this *FightingRouter) Api_1(request *fnet.PkgAll) {
 				State: 1,
 			}
 			//request.Fconn.SendBuff(1, resp)
-			packdata, err := fnet.DefaultDataPack.Pack(1, resp)
-			if err == nil{
+			packdata, err := utils.GlobalObject.Protoc.GetDataPack().Pack(1, resp)
+			if err == nil {
 				request.Fconn.Send(packdata)
-			}else{
+			} else {
 				logger.Error("pack data error")
 			}
 		} else {
@@ -66,10 +67,10 @@ func (this *FightingRouter) Api_2(request *fnet.PkgAll) {
 						State: 1,
 					}
 					//request.Fconn.SendBuff(2, resp)
-					packdata, err := fnet.DefaultDataPack.Pack(2, resp)
-					if err == nil{
+					packdata, err := utils.GlobalObject.Protoc.GetDataPack().Pack(2, resp)
+					if err == nil {
 						request.Fconn.SendBuff(packdata)
-					}else{
+					} else {
 						logger.Error("pack data error")
 					}
 				}
@@ -98,10 +99,10 @@ func (this *FightingRouter) Api_4(request *fnet.PkgAll) {
 						State: 1,
 					}
 					//request.Fconn.SendBuff(4, resp)
-					packdata, err := fnet.DefaultDataPack.Pack(4, resp)
-					if err == nil{
+					packdata, err := utils.GlobalObject.Protoc.GetDataPack().Pack(4, resp)
+					if err == nil {
 						request.Fconn.SendBuff(packdata)
-					}else{
+					} else {
 						logger.Error("pack data error")
 					}
 					//检测是否所有客户端资源加载完成
