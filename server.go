@@ -4,17 +4,15 @@ import (
 	"fighting/api"
 	"fighting/lockstep"
 	"fmt"
-	"github.com/viphxin/xingo/fserver"
 	"github.com/viphxin/xingo/iface"
 	"github.com/viphxin/xingo/logger"
 	"github.com/viphxin/xingo/utils"
 
 	_ "net/http"
 	_ "net/http/pprof"
-	"os"
-	"os/signal"
 	_ "runtime/pprof"
 	_ "time"
+	"github.com/viphxin/xingo"
 )
 
 func DoConnectionMade(fconn iface.Iconnection) {
@@ -41,7 +39,7 @@ func DoConnectionLost(fconn iface.Iconnection) {
 }
 
 func main() {
-	s := fserver.NewServer()
+	s := xingo.NewXingoTcpServer()
 
 	//add api ---------------start
 	FightingRouterObj := &api.FightingRouter{}
@@ -64,11 +62,5 @@ func main() {
 	// 	// }
 	// }()
 
-	s.Start()
-	// close
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt, os.Kill)
-	sig := <-c
-	fmt.Println("=======", sig)
-	s.Stop()
+	s.Serve()
 }
